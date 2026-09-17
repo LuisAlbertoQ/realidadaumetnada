@@ -13,5 +13,20 @@
     "label_en": "corn",
     "palabra_quechua": "Sara",
     "audio_asset": "audio/maiz_quechua.m4a"
+  },
+  {
+    "label_en": "laptop",
+    "palabra_quechua": "Antañiqiq",
+    "audio_asset": "audio/antanikiq.mp3"
+  },
+  {
+    "label_en": "computer keyboard",
+    "palabra_quechua": "Qillqana taqlla",
+    "audio_asset": "audio/qillqana_taqlla.mp3"
+  },
+  {
+    "label_en": "fountain pen",
+    "palabra_quechua": "Qillqana",
+    "audio_asset": "audio/qillqana.mp3"
   }
 ]
