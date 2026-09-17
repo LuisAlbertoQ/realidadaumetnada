@@ -7,8 +7,8 @@ plugins {
 
 android {
     namespace = "com.example.realidadaumentada"
-    compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    compileSdk = 36
+    ndkVersion = "27.0.12077973"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -36,6 +36,12 @@ android {
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.getByName("debug")
         }
+    }
+
+    // Requerido por tflite_flutter: el .tflite no debe comprimirse en el APK,
+    // si no Interpreter.fromAsset falla con "invalid argument".
+    aaptOptions {
+        noCompress += "tflite"
     }
 }
 

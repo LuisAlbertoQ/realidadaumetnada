@@ -1,0 +1,17 @@
+[
+  {
+    "label_en": "cup",
+    "palabra_quechua": "Puku",
+    "audio_asset": "audio/taza_quechua.m4a"
+  },
+  {
+    "label_en": "book jacket",
+    "palabra_quechua": "Liwru",
+    "audio_asset": "audio/libro_quechua.m4a"
+  },
+  {
+    "label_en": "corn",
+    "palabra_quechua": "Sara",
+    "audio_asset": "audio/maiz_quechua.m4a"
+  }
+]

@@ -43,6 +43,10 @@
 	</array>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Camara para reconocer objetos y reproducir su nombre en quechua</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Microfono requerido por ARCore</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 </dict>
