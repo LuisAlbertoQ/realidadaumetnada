@@ -2,31 +2,69 @@
   {
     "label_en": "cup",
     "palabra_quechua": "Puku",
-    "audio_asset": "audio/taza_quechua.m4a"
+    "audio_asset": "audio/taza_quechua.m4a",
+    "ejemplos": [
+      {
+        "texto_quechua": "Kay pukupi mat'ita upyay.",
+        "traduccion_es": "Toma mate en esta taza.",
+        "audio": "audio/ejemplo_puku_1.m4a"
+      },
+      {
+        "texto_quechua": "Hatun pukuqa mesapim kachkan.",
+        "traduccion_es": "La taza grande está sobre la mesa.",
+        "audio": "audio/ejemplo_puku_2.m4a"
+      },
+      {
+        "texto_quechua": "Musuq pukuykita mañaway.",
+        "traduccion_es": "Préstame tu taza nueva.",
+        "audio": "audio/ejemplo_puku_3.m4a"
+      }
+    ]
   },
   {
-    "label_en": "book jacket",
+    "label_en": "book",
     "palabra_quechua": "Liwru",
-    "audio_asset": "audio/libro_quechua.m4a"
-  },
-  {
-    "label_en": "corn",
-    "palabra_quechua": "Sara",
-    "audio_asset": "audio/maiz_quechua.m4a"
+    "audio_asset": "audio/libro_quechua.m4a",
+    "ejemplos": [
+      {
+        "texto_quechua": "Allin liwrutam ñawinchachkani.",
+        "traduccion_es": "Estoy leyendo un buen libro.",
+        "audio": "audio/ejemplo_liwru_1.m4a"
+      },
+      {
+        "texto_quechua": "Liwruqa mesapim kachkan.",
+        "traduccion_es": "El libro está sobre la mesa.",
+        "audio": "audio/ejemplo_liwru_2.m4a"
+      },
+      {
+        "texto_quechua": "Yachanaykipaq kay liwruta rantiy.",
+        "traduccion_es": "Compra este libro para estudiar.",
+        "audio": "audio/ejemplo_liwru_3.m4a"
+      }
+    ]
   },
   {
     "label_en": "laptop",
     "palabra_quechua": "Antañiqiq",
-    "audio_asset": "audio/antanikiq.mp3"
+    "audio_asset": "audio/antanikiq.mp3",
+    "ejemplos": []
   },
   {
-    "label_en": "computer keyboard",
+    "label_en": "keyboard",
     "palabra_quechua": "Qillqana taqlla",
-    "audio_asset": "audio/qillqana_taqlla.mp3"
+    "audio_asset": "audio/qillqana_taqlla.mp3",
+    "ejemplos": []
   },
   {
-    "label_en": "fountain pen",
-    "palabra_quechua": "Qillqana",
-    "audio_asset": "audio/qillqana.mp3"
+    "label_en": "bottle",
+    "palabra_quechua": "Puyñu (REVISAR)",
+    "audio_asset": "audio/botella_quechua.mp3",
+    "ejemplos": []
+  },
+  {
+    "label_en": "chair",
+    "palabra_quechua": "Tiyana (REVISAR)",
+    "audio_asset": "audio/silla_quechua.mp3",
+    "ejemplos": []
   }
 ]

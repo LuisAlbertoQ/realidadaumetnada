@@ -35,9 +35,6 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   camera: ^0.11.0
-  # arcore_flutter_plugin desactivado: v0.1.0 sin namespace, incompatible con AGP 8.7.3.
-  # Fase 3 no lo usa (ningún import). Se reevaluará AR en Fase 4 con alternativa vigente.
-  # arcore_flutter_plugin: ^0.1.0
   audioplayers: ^6.1.0
   tflite_flutter: ^0.12.1
   path_provider: ^2.1.5
@@ -67,8 +64,8 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/model/mobilenet_v2.tflite
-    - assets/model/labels.txt
+    - assets/model/detect.tflite
+    - assets/model/coco_labels.txt
     - assets/data/vocabulario.json
     - assets/audio/
 

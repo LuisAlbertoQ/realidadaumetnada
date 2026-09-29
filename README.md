@@ -1,87 +1,110 @@
-# 📱 Cámara Parlante — Demo de Realidad Aumentada + Lengua Indígena
+# 📱 Cámara Parlante — Foto + Detección de Objetos + Lengua Indígena
 
-Demo móvil **100% offline (on-device)** que apunta la cámara a un objeto físico,
-lo reconoce con visión computacional y **muestra su nombre en quechua en pantalla
-mientras reproduce su pronunciación en audio**.
+Demo móvil **100% offline (on-device)**: el usuario toma una **foto**, la app
+detecta los objetos con un modelo SSD, dibuja **bounding boxes** tocables sobre
+la imagen y al tocar una caja abre un **BottomSheet** con la palabra en quechua,
+su audio y oraciones de ejemplo.
 
-## 🎯 ¿De qué trata?
+> **Pivote de arquitectura:** se abandonó el flujo AR en vivo (clasificación por
+> stream + overlay). El flujo actual es foto estática → detección → boxes →
+> BottomSheet. Los archivos del flujo anterior (`ml_service.dart`,
+> `camera_screen.dart` y widgets de Fase 5) quedan en el repo como referencia
+> pero ya no se usan (`main.dart` apunta a `PhotoScreen`).
 
-Una herramienta educativa para revalorizar lenguas originarias: el usuario apunta
-la cámara (con una mirilla guía) y cuando el modelo reconoce un objeto del
-diccionario con confianza ≥ 50 %, la app muestra una tarjeta flotante con la
-palabra en quechua y reproduce el audio grabado. Incluye cooldown de 5 s para no
-saturar el equipo (el stream va a ~30 fps).
+## 🎯 Flujo de la app
 
-**Objetos soportados (6):**
+1. Vista de cámara full-screen + botón flotante **Capturar**.
+2. La foto se congela y pasa por `detect.tflite` (SSD MobileNetV2, 300×300).
+3. La foto se muestra con rectángulos (`CustomPaint`): **amarillos** si la
+   etiqueta está en el diccionario, blancos si no.
+4. Tap en una caja → `showModalBottomSheet` con:
+   - palabra en quechua + botón 🔊 de audio,
+   - sección Diccionario/Contexto con oraciones de ejemplo (cada una con su play),
+   - o "Sin traducción aún" si el objeto no está en el JSON.
+5. Botón **Nueva foto** (recrea la cámara desde cero; `resumePreview` se congela
+   en varios Xiaomi/CameraX).
 
-| Objeto (EN)         | Quechua          | Audio                          |
-|---------------------|------------------|--------------------------------|
-| cup                 | Puku             | `assets/audio/taza_quechua.m4a` |
-| book jacket         | Liwru            | `assets/audio/libro_quechua.m4a`|
-| corn                | Sara             | `assets/audio/maiz_quechua.m4a` |
-| laptop              | Antañiqiq        | `assets/audio/antanikiq.mp3`    |
-| computer keyboard   | Qillqana taqlla  | `assets/audio/qillqana_taqlla.mp3` |
-| fountain pen        | Qillqana         | `assets/audio/qillqana.mp3`     |
-
-> Las etiquetas en inglés son las clases exactas de ImageNet que emite el modelo
-> (ej. `book jacket`, no `book`).
+El detector reporta **hasta 10 objetos** por foto (todo lo que ve el modelo,
+sin pasar por el JSON); el JSON solo decide resaltado y contenido del sheet.
+Umbral por defecto: score ≥ 50 % (`detect(file, minScore: 0.5)`).
 
 ## 🛠️ Stack
 
-| Capa        | Tecnología |
-|-------------|------------|
-| Frontend    | Flutter (Dart) |
-| Cámara      | `camera` + `permission_handler` |
-| ML on-device| MobileNetV2 `.tflite` + `tflite_flutter` + `image` (preproceso YUV→RGB 224×224) |
-| Audio       | `audioplayers` (assets locales, `AssetSource`) |
-| Datos       | `assets/data/vocabulario.json` (etiqueta EN → palabra quechua → audio) |
-| AR visual   | Overlay Flutter sobre el preview (se descartó `arcore_flutter_plugin v0.1.0` por incompatibilidad con AGP 8 — sin `namespace`, rompe `assembleDebug`) |
-| Exportación del modelo | Python + TensorFlow/Keras (`tools/download_model.py`, sin entrenamiento) |
+| Capa         | Tecnología |
+|--------------|------------|
+| Frontend     | Flutter (Dart) |
+| Cámara       | `camera` + `permission_handler` (foto `takePicture`, sin stream) |
+| ML on-device | SSD MobileNetV2 `.tflite` (uint8 300×300, postproceso con NMS incluido) + `tflite_flutter` + `image` |
+| Audio        | `audioplayers` (assets locales, `AssetSource`) |
+| Datos        | `assets/data/vocabulario.json` v2 (label EN → palabra + audio + ejemplos) |
+| Dibujo       | `CustomPaint` + `showModalBottomSheet` (Flutter core, sin plugins AR) |
+| Descarga del modelo | Python estándar, sin TensorFlow (`tools/download_detector.py`) |
+
+**Salidas del modelo** (`detect.tflite`, 6.2 MB): `boxes[1,10,4]` (ymin,xmin,ymax,xmax
+0-1) + `classes[1,10]` (índice 0-89 a `coco_labels.txt`) + `scores[1,10]` + `count[1]`.
+⚠️ Multisalida: invocar con `runForMultipleInputs([input], {0..3})` — `run()`
+simple envuelve el Map como salida única y revienta en `outputs[1]!`
+(bug real encontrado y corregido en esta demo).
 
 ## 🧩 Arquitectura
 
 ```
 lib/
-  main.dart                  → home: CameraScreen
+  main.dart                  → home: PhotoScreen
   services/
-    ml_service.dart          → carga .tflite + labels, predict(CameraImage)
-    dictionary_service.dart  → carga vocabulario.json, lookup por label
-    audio_service.dart       → reproduce AssetSource, corta anterior
+    detector_service.dart    → SSD: preproceso JPEG→RGB300 + inferencia + filtro score
+                             (+ self-test con ceros, lastBest/lastError/lastStack en pantalla)
+    dictionary_service.dart  → vocabulario.json v2 + lookup (ejemplos opcionales)
+    audio_service.dart       → AssetSource, corta el audio anterior
+    ml_service.dart          → [LEGADO Fase 3] clasificador, no se usa
   ui/
-    camera_screen.dart       → StatefulWidget: stream + umbral 50% + cooldown 5 s
+    photo_screen.dart        → live / processing / result + tap→sheet + retake con re-init
+    camera_screen.dart       → [LEGADO Fase 4/5] stream en vivo, no se usa
     widgets/
-      detection_reticle.dart → mirilla central translúcida
-      ar_label_card.dart     → tarjeta amarilla alto contraste (legible ~1 m)
-      status_panel.dart      → "Buscando objetos..." / "¡Encontrado: X!"
+      boxes_painter.dart     → CustomPaint de rects + chips (mapeo contain compartido)
+      word_sheet.dart        → BottomSheet: palabra, audio, ejemplos
+      detection_reticle.dart, ar_label_card.dart, status_panel.dart → [LEGADO]
 assets/
-  model/   → mobilenet_v2.tflite (3.8 MB cuantizado) + labels.txt (1001)
-  data/    → vocabulario.json
-  audio/   → .m4a/.mp3 grabados (mono 44.1 kHz)
+  model/   → detect.tflite + coco_labels.txt (90 clases COCO)
+  data/    → vocabulario.json (v2)
+  audio/   → .m4a/.mp3 grabados
 tools/
-  download_model.py → descarga MobileNetV2 (ImageNet) y lo convierte a .tflite
+  download_detector.py → descarga SSD + labels (urllib, verificado GitHub raw 200)
+  download_model.py    → [LEGADO] clasificador MobileNetV2 (requería TensorFlow)
 ```
+
+**Diccionario actual (6 entradas):** cup→Puku, book→Liwru, laptop→Antañiqiq,
+keyboard→Qillqana taqlla, bottle→Puyñu (REVISAR), chair→Tiyana (REVISAR).
+cup/book ya tienen 3 oraciones de ejemplo c/u; resto pendiente + audios de
+laptop/keyboard/bottle/chair pendientes. Las etiquetas son las exactas de COCO
+(`book` y `keyboard` directos; COCO **no** tiene `corn` ni `pen`, se
+reemplazaron por `bottle`/`chair`).
 
 ## 🚀 Cómo ejecutar
 
-**1. Modelo (una vez, requiere Python con TensorFlow):**
+**1. Modelo (una vez, sin dependencias):**
 ```powershell
-pip install tensorflow
-python tools/download_model.py
-Copy-Item tools/mobilenet_v2.tflite, tools/labels.txt assets/model/ -Force
+python tools/download_detector.py
+Copy-Item tools/detect.tflite, tools/coco_labels.txt assets/model/ -Force
 ```
 
-**2. Audios:** coloca los 6 archivos con los nombres exactos de la tabla en `assets/audio/`.
+**2. Audios:** graba los `.m4a/.mp3` con los nombres exactos del JSON en `assets/audio/`
+y cablea las oraciones en el campo `ejemplos` (`texto_quechua`, `traduccion_es`, `audio`).
 
 **3. App:**
 ```powershell
 flutter pub get
-flutter run          # reinstalación limpia (los assets nuevos no entran con hot reload)
+flutter run          # reinstalación limpia (assets nuevos no entran con hot reload)
 ```
+
+**Diagnóstico en pantalla (sin logcat):** en vivo se muestra la ficha del modelo
+(`in=[1,300,300,3] uint8 | outs=...`) + `Self-test: OK/FALLO`; en resultado, la
+barra muestra `mejor: <label> <%>` y caja roja con error + stack si algo falla.
 
 **Notas:**
 - `flutter analyze` debe dar `No issues found!`.
-- Si agregas audios o editas el JSON, reinstala el APK.
-- Umbral de confianza: `CameraScreen._minConfidence` (actual: `0.50`).
+- Varias instancias del mismo objeto pueden fusionarse por el NMS interno o
+  quedar bajo el umbral: probar con `minScore: 0.3` y buena luz si faltan cajas.
 
 ## 👥 Integrantes
 

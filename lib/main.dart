@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'ui/camera_screen.dart';
+import 'ui/photo_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
     return const MaterialApp(
       title: 'Camara Parlante',
       debugShowCheckedModeBanner: false,
-      home: CameraScreen(),
+      home: PhotoScreen(),
     );
   }
 }

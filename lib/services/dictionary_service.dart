@@ -3,26 +3,51 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
-/// Entrada del diccionario: etiqueta ImageNet -> palabra + audio.
+/// Oración de ejemplo con su audio.
+class VocabExample {
+  final String textoQuechua;
+  final String traduccionEs;
+  final String audio;
+
+  const VocabExample({
+    required this.textoQuechua,
+    required this.traduccionEs,
+    required this.audio,
+  });
+
+  factory VocabExample.fromJson(Map<String, dynamic> j) => VocabExample(
+        textoQuechua: ((j['texto_quechua'] ?? '') as String).trim(),
+        traduccionEs: ((j['traduccion_es'] ?? '') as String).trim(),
+        audio: ((j['audio'] ?? '') as String).trim(),
+      );
+}
+
+/// Entrada del diccionario v2: etiqueta COCO -> palabra + audio + ejemplos.
 class VocabEntry {
   final String labelEn;
   final String palabra;
-  final String audioAsset; // ej. "audio/taza_quechua.mp3" (para AssetSource)
+  final String audioAsset; // ej. "audio/taza_quechua.m4a" (para AssetSource)
+  final List<VocabExample> ejemplos;
 
   const VocabEntry({
     required this.labelEn,
     required this.palabra,
     required this.audioAsset,
+    required this.ejemplos,
   });
 
   factory VocabEntry.fromJson(Map<String, dynamic> j) => VocabEntry(
         labelEn: (j['label_en'] as String).trim(),
         palabra: (j['palabra_quechua'] as String).trim(),
         audioAsset: (j['audio_asset'] as String).trim(),
+        ejemplos: ((j['ejemplos'] ?? []) as List)
+            .cast<Map<String, dynamic>>()
+            .map(VocabExample.fromJson)
+            .toList(),
       );
 }
 
-/// FASE 4: carga `assets/data/vocabulario.json` en memoria y resuelve matches.
+/// Carga `assets/data/vocabulario.json` en memoria y resuelve matches.
 class DictionaryService {
   static const String _dictAsset = 'assets/data/vocabulario.json';
 
@@ -48,11 +73,5 @@ class DictionaryService {
   }
 
   /// Lookup case-insensitive. Retorna null si el label no está en el JSON.
-  VocabEntry? lookup(String labelEn) {
-    final e = _byLabel[labelEn.trim().toLowerCase()];
-    if (e != null) {
-      debugPrint('[DICC] Match: "$labelEn" -> "${e.palabra}" + ${e.audioAsset}');
-    }
-    return e;
-  }
+  VocabEntry? lookup(String labelEn) => _byLabel[labelEn.trim().toLowerCase()];
 }
