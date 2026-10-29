@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Realidadaumentada</string>
+	<string>Clasificador de residuos</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -44,9 +44,9 @@
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>Camara para reconocer objetos y reproducir su nombre en quechua</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>Microfono requerido por ARCore</string>
+	<string>La cámara se usa para detectar y clasificar residuos en tiempo real.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Se accede a tus fotos y videos para analizarlos con el modelo de residuos.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 </dict>

@@ -43,3 +43,12 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Gradle build artifacts (Android)
+/android/build/
+
+# Artefactos de entrenamiento del clasificador (no van al repo ni al APK).
+/assets/model/processed/
+*.onnx
+*.pt
+*.npy

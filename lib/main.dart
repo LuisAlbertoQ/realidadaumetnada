@@ -1,21 +1,33 @@
 import 'package:flutter/material.dart';
 
-import 'ui/photo_screen.dart';
+import 'services/classifier_service.dart';
+import 'ui/home_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const MyApp());
+  // Carga en segundo plano: la home escucha el ChangeNotifier.
+  ClassifierService.instance.ensureLoaded();
+  runApp(const WasteClassifierApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class WasteClassifierApp extends StatelessWidget {
+  const WasteClassifierApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      title: 'Camara Parlante',
+    final scheme = ColorScheme.fromSeed(
+      seedColor: const Color(0xFF2E7D32),
+      brightness: Brightness.dark,
+    );
+    return MaterialApp(
+      title: 'Clasificador de residuos',
       debugShowCheckedModeBanner: false,
-      home: PhotoScreen(),
+      theme: ThemeData(
+        colorScheme: scheme,
+        useMaterial3: true,
+        scaffoldBackgroundColor: const Color(0xFF101410),
+      ),
+      home: const HomeScreen(),
     );
   }
 }

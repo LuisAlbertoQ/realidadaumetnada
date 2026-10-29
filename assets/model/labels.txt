@@ -1,0 +1,9 @@
+# Clases del modelo waste_classifier (mismo orden que la capa de salida).
+# Una etiqueta por línea, sin numeración ni comentarios al final.
+azul_papel_carton
+amarillo_metales
+blanco_plasticos
+gris_vidrio
+marron_organicos
+rojo_peligrosos
+negro_generales
