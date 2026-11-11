@@ -170,7 +170,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Text(
                   '4. La entrada debe ser [1,224,224,3] float32 con '
                   'normalización ImageNet. Si reentrenas, actualiza la '
-                  'temperatura (T = 3.09) en lib/services/classifier_math.dart.',
+                  'temperatura (T = 3.13) en lib/services/classifier_math.dart.',
                 ),
                 SizedBox(height: 12),
                 Text(

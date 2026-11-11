@@ -48,11 +48,11 @@ void main() {
       WasteCatalog.plasticos.id,
       reason: 'La referencia en Python da argmax=2 (blanco_plasticos)',
     );
-    expect(result.best!.score, closeTo(0.7069, 0.01));
+    expect(result.best!.score, closeTo(0.5070, 0.01));
     expect(result.top.length, 3);
     expect(result.demo, isFalse);
 
-    // La segunda clase de la referencia es vidrio (0.155).
+    // La segunda clase de la referencia es vidrio (0.1293).
     expect(result.top[1].category.id, WasteCatalog.vidrio.id);
   });
 
@@ -75,9 +75,9 @@ void main() {
     expect(
       centered.best!.category.id,
       WasteCatalog.plasticos.id,
-      reason: 'recorte central: argmax=2, p≈0.4738',
+      reason: 'recorte central: argmax=2, p≈0.4936',
     );
-    expect(centered.best!.score, closeTo(0.4738, 0.01));
+    expect(centered.best!.score, closeTo(0.4936, 0.01));
 
     final bottomLeft = classifier.classifySync(
       source,
@@ -86,9 +86,9 @@ void main() {
     expect(
       bottomLeft.best!.category.id,
       WasteCatalog.vidrio.id,
-      reason: 'esquina inferior izquierda: argmax=3, p≈0.3852',
+      reason: 'esquina inferior izquierda: argmax=3, p≈0.3411',
     );
-    expect(bottomLeft.best!.score, closeTo(0.3852, 0.01));
+    expect(bottomLeft.best!.score, closeTo(0.3411, 0.01));
 
     final topRight = classifier.classifySync(
       source,
@@ -97,9 +97,9 @@ void main() {
     expect(
       topRight.best!.category.id,
       WasteCatalog.papelCarton.id,
-      reason: 'esquina superior derecha: argmax=0, p≈0.2622',
+      reason: 'esquina superior derecha: argmax=0, p≈0.3090',
     );
-    expect(topRight.best!.score, closeTo(0.2622, 0.01));
+    expect(topRight.best!.score, closeTo(0.3090, 0.01));
 
     // Cada marco produce una predicción distinta: el recorte llega al modelo.
     expect(centered.best!.category.id, isNot(bottomLeft.best!.category.id));

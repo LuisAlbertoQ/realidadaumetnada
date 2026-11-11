@@ -7,11 +7,11 @@ import 'package:image/image.dart' as img;
 import '../models/classification.dart';
 import 'waste_catalog.dart';
 
-/// Temperatura de calibración del modelo (`temperature.npy` = 3.0924).
+/// Temperatura de calibración del modelo (`temperature.npy` = 3.1314).
 ///
 /// Sin dividir los logits por este valor las probabilidades salen
 /// sobreconfiadas; con él quedan calibradas.
-const double kTemperature = 3.092362530435132;
+const double kTemperature = 3.131434697805279;
 
 /// Normalización ImageNet usada durante el entrenamiento.
 const List<double> kImageNetMean = <double>[0.485, 0.456, 0.406];

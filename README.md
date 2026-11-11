@@ -7,7 +7,7 @@ entrenado por nosotros** y muestra a qué categoría de separación pertenece:
 Es el pivote de la demo anterior de "Cámara Parlante" (quechua): se eliminaron
 el diccionario y los audios, y el foco pasó a la clasificación de residuos.
 
-> **Modelo:** `assets/model/waste_classifier.tflite` (42.7 MB, float32,
+> **Modelo:** `assets/model/waste_classifier.tflite` (42.9 MB, float32,
 > entrada `[1,224,224,3]`, salida `[1,7]` logits). Si el archivo no está, la
 > app arranca en **modo demo** con clases simuladas y todas las pantallas
 > siguen siendo navegables.
@@ -117,13 +117,13 @@ y resultados simulados). Para usar el modelo real:
 3. Copia el archivo como `assets/model/waste_classifier.tflite`.
 4. Verifica `assets/model/labels.txt` (mismo orden que la capa de salida).
 5. Ajusta `kTemperature` en `lib/services/classifier_math.dart` si reentrenaste
-   (valor actual: 3.0924).
+   (valor actual: 3.1314).
 6. Reconstruye: `flutter clean && flutter pub get && flutter run`.
 
 La ficha de la home muestra la entrada/salida reales:
 
 ```
-waste_classifier.tflite · in [1, 224, 224, 3] float32 · out [1, 7] · T=3.09
+waste_classifier.tflite · in [1, 224, 224, 3] float32 · out [1, 7] · T=3.13
 ```
 
 y el resultado del self-test (una inferencia con imagen gris al arrancar).
@@ -136,7 +136,7 @@ y el resultado del self-test (una inferencia con imagen gris al arrancar).
 2. Resize a 224×224 (RGB).
 3. (p / 255 - mean) / std   con mean=[0.485,0.456,0.406], std=[0.229,0.224,0.225]
 4. Tensor NHWC [1,224,224,3] float32.
-5. probs = softmax(logits / 3.0924)   →  argmax = clase
+5. probs = softmax(logits / 3.1314)   →  argmax = clase
 ```
 
 El marco se expresa en coordenadas normalizadas (`SquareCrop`: `size`,
@@ -185,7 +185,7 @@ python tools/verify_model.py
 
 Genera una imagen sintética, la preprocesa igual que la app y compara los
 logits de `.tflite` contra `.onnx`. Resultado esperado con la imagen sintética:
-`argmax = 2 (blanco_plasticos)`, `p ≈ 0.7069`, diferencia máxima `≈ 2e-6`.
+`argmax = 2 (blanco_plasticos)`, `p ≈ 0.5070`, diferencia máxima `≈ 1.3e-6`.
 
 ## ⚠️ Notas
 

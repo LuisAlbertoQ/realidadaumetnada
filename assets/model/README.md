@@ -14,8 +14,25 @@ La app espera aquí dos archivos:
 | Entrada | `[1, 224, 224, 3]` **NHWC**, float32 (o int8/uint8 cuantizado) |
 | Salida | `[1, 7]` **logits** (sin softmax) |
 | Normalización | ImageNet: `mean=[0.485,0.456,0.406]`, `std=[0.229,0.224,0.225]` |
-| Temperatura | `T = 3.0924` → `softmax(logits / T)` |
-| Tamaño | 42.7 MB en float32 (ONNX 42.6 MB) |
+| Temperatura | `T = 3.1314` → `softmax(logits / T)` |
+| Tamaño | 42.9 MB en float32 (ONNX 42.9 MB) |
+
+Modelo actual: `best_model_optuna.pt` (exportado el 2026-11-08). Backbone
+ResNet18 + cabeza `Linear → BatchNorm → ReLU → Dropout → Linear`, elegido por
+búsqueda de hiperparámetros Optuna. La matriz de confusión de `processed/` es
+del modelo anterior (2026-10-28), no de este export.
+
+## Rendimiento (test, 4260 imágenes)
+
+| Modelo | Preprocesamiento | Accuracy | F1 macro |
+|---|---|---|---|
+| optuna (actual) | resize 224×224 (el del entrenamiento) | 0.9768 | 0.9727 |
+| optuna (actual) | recorte cuadrado + resize (lo que hace la app) | 0.9714 | 0.9666 |
+| anterior | resize 224×224 | 0.9702 | 0.9639 |
+
+Medido con `onnxruntime` sobre `data/splits/test.csv`; el primer valor coincide
+con `docs/MODEL_CARD.md`. El recorte cuadrado de la app cuesta ~0.5 puntos
+frente al resize completo, pero el modelo actual sigue por encima del anterior.
 
 La app recorta el **cuadrado central** de la imagen y lo redimensiona a
 224×224 antes de normalizar.
@@ -77,9 +94,9 @@ Salida esperada con los archivos actuales:
 ```
 input input [1 224 224 3] float32
 output logits [1 7] float32
-tflite argmax = 2  p = 0.7069
-onnx   argmax = 2  p = 0.7069
-max abs diff = 1.9e-06
+tflite argmax = 2  p = 0.5070
+onnx   argmax = 2  p = 0.5070
+max abs diff = 1.3e-06
 ```
 
 ## Diagnóstico en la app
@@ -88,7 +105,7 @@ La ficha superior de la home muestra la entrada y salida reales del modelo
 cargado, además del resultado del self-test (inferencia con una imagen gris):
 
 ```
-waste_classifier.tflite · in [1, 224, 224, 3] float32 · out [1, 7] · T=3.09
+waste_classifier.tflite · in [1, 224, 224, 3] float32 · out [1, 7] · T=3.13
 Self-test: OK
 ```
 

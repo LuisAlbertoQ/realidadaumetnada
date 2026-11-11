@@ -22,7 +22,7 @@ DEFAULT_ONNX = ROOT / "assets/model/processed/waste_classifier.onnx"
 SIZE = 224
 MEAN = np.array([0.485, 0.456, 0.406], np.float32)
 STD = np.array([0.229, 0.224, 0.225], np.float32)
-TEMPERATURE = 3.092362530435132
+TEMPERATURE = 3.131434697805279
 
 LABELS = [
     "azul_papel_carton",

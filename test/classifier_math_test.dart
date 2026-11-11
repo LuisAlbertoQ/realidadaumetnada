@@ -165,31 +165,31 @@ void main() {
   });
 
   group('softmax con temperatura', () {
-    // Logits reales del modelo (float32 .tflite == ONNX) para la imagen
+    // Logits reales del modelo optuna (float32 .tflite == ONNX) para la imagen
     // sintética, verificados con ai-edge-litert y onnxruntime.
     const logits = <double>[
-      -3.9063000679016113,
-      -2.695499897003174,
-      5.874599933624268,
-      1.1816999912261963,
-      -3.331700086593628,
-      -9.130900382995605,
-      -4.7895002365112305,
+      -1.7997183799743652,
+      -2.271092414855957,
+      3.7276437282562256,
+      -0.5507894158363342,
+      -2.928622245788574,
+      -4.090948581695557,
+      -1.3544206619262695,
     ];
     const expected = <double>[
-      0.0299,
-      0.0442,
-      0.7069,
-      0.1550,
-      0.0360,
-      0.0055,
-      0.0225,
+      0.0868,
+      0.0747,
+      0.5070,
+      0.1293,
+      0.0605,
+      0.0417,
+      0.1000,
     ];
 
     test('reproduce las probabilidades del modelo', () {
       final probabilities = softmaxWithTemperature(logits);
       expect(probabilities.length, 7);
-      expect(probabilities.reduce(math.max), closeTo(0.7069, 5e-4));
+      expect(probabilities.reduce(math.max), closeTo(0.5070, 5e-4));
       for (var i = 0; i < 7; i++) {
         expect(probabilities[i], closeTo(expected[i], 5e-4));
       }
